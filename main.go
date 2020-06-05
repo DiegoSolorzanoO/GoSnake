@@ -18,23 +18,23 @@ var direction string
 
 func init() {
 	var err error
-	imgC, _, err = ebitenutil.NewImageFromFile("pokeball.png", ebiten.FilterDefault) //aqui se cargan las imagenes
+	imgC, _, err = ebitenutil.NewImageFromFile("assets/pokeball.png", ebiten.FilterDefault) //aqui se cargan las imagenes
 	if err != nil {
 		log.Fatal(err)
 	}
-	imgUW, _, err = ebitenutil.NewImageFromFile("wall.png", ebiten.FilterDefault)
+	imgUW, _, err = ebitenutil.NewImageFromFile("assets/wall.png", ebiten.FilterDefault)
 	if err != nil {
 		log.Fatal(err)
 	}
-	imgDW, _, err = ebitenutil.NewImageFromFile("wall.png", ebiten.FilterDefault)
+	imgDW, _, err = ebitenutil.NewImageFromFile("assets/wall.png", ebiten.FilterDefault)
 	if err != nil {
 		log.Fatal(err)
 	}
-	imgLW, _, err = ebitenutil.NewImageFromFile("sidewall.png", ebiten.FilterDefault)
+	imgLW, _, err = ebitenutil.NewImageFromFile("assets/sidewall.png", ebiten.FilterDefault)
 	if err != nil {
 		log.Fatal(err)
 	}
-	imgRW, _, err = ebitenutil.NewImageFromFile("sidewall.png", ebiten.FilterDefault)
+	imgRW, _, err = ebitenutil.NewImageFromFile("assets/sidewall.png", ebiten.FilterDefault)
 	if err != nil {
 		log.Fatal(err)
 	}
