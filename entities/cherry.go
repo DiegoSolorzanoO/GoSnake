@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -38,11 +37,6 @@ func CreateCherry(g *Game, xCLimit float64, yCLimit float64) *Cherry {
 	random := rand.New(seed)
 	c.xPos = random.Float64() * c.xLimit
 	c.yPos = random.Float64() * c.yLimit
-
-	fmt.Println(rand.Float64())
-	fmt.Println(rand.Float64())
-	fmt.Println(c.xPos)
-	fmt.Println(c.yPos)
 
 	return &c
 }
