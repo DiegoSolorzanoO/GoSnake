@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 // Game : Main object of the scene. Parent of everything
@@ -40,7 +39,7 @@ func NewGame(cherrys int) Game {
 	g.cherries = arrayC
 	g.enemies = arrayEnemies
 	g.snake = CreateSnake(&g)
-	g.hud = CreateHud(&g)
+	g.hud = CreateHud(&g, cherrys)
 
 	return g
 }
@@ -111,12 +110,9 @@ func (g *Game) Draw(screen *ebiten.Image) error {
 			return err
 		}
 	}
-	if !g.playing && g.numCherries != 0 {
-		ebitenutil.DebugPrint(screen, "Game over")
-	}
 
-	if !g.playing && g.numCherries == 0 {
-		ebitenutil.DebugPrint(screen, "You Win")
+	if g.numCherries == 0 {
+		g.hud.EndGame(screen)
 	}
 
 	return nil

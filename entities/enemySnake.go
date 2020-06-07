@@ -48,28 +48,36 @@ func (s *EnemySnake) Update(dotTime int) error {
 	if dotTime == 1 {
 		random := rand.New(s.seed)
 		action := random.Intn(4)
-		changingDirection := random.Intn(2)
+		changingDirection := random.Intn(3)
 		posX, posY := s.getHeadPos()
-		if changingDirection == 1 {
+		if changingDirection == 0 {
 			switch action {
 			case 0:
-				if posX < 580 {
+				if posX < 580 && s.lastDir != "left" {
 					s.lastDir = "right"
+				} else {
+					s.lastDir = "left"
 				}
 				return nil
 			case 1:
-				if posY < 580 {
+				if posY < 580 && s.lastDir != "up" {
 					s.lastDir = "down"
-				}
-				return nil
-			case 2:
-				if posY > 0 {
+				} else {
 					s.lastDir = "up"
 				}
 				return nil
+			case 2:
+				if posY > 0 && s.lastDir != "down" {
+					s.lastDir = "up"
+				} else {
+					s.lastDir = "down"
+				}
+				return nil
 			case 3:
-				if posX > 0 {
+				if posX > 0 && s.lastDir != "right" {
 					s.lastDir = "left"
+				} else {
+					s.lastDir = "right"
 				}
 				return nil
 			}
@@ -92,12 +100,12 @@ func (s *EnemySnake) Update(dotTime int) error {
 		}
 	}
 
-	// if dotTime == 1 {
-	// 	xPos, yPos := s.getHeadPos()
-	// 	if xPos < 0 || xPos > 580 || yPos < 0 || yPos > 580 || s.collisionWithHimself() {
-	// 		s.game.End()
-	// 	}
-	// }
+	if dotTime == 1 {
+		xPos, yPos := s.game.snake.getHeadPos()
+		if s.collisionWithPlayer(xPos, yPos) {
+			s.game.End()
+		}
+	}
 	return nil
 }
 
@@ -162,10 +170,9 @@ func (s *EnemySnake) updateParts(newX, newY float64) {
 	s.parts = s.parts[:s.numParts+1]
 }
 
-func (s *EnemySnake) collisionWithHimself() bool {
-	posX, posY := s.getHeadPos()
-	for i := 1; i < len(s.parts); i++ {
-		if posX == s.parts[i][0] && posY == s.parts[i][1] {
+func (s *EnemySnake) collisionWithPlayer(xPos, yPos float64) bool {
+	for i := 0; i < len(s.parts); i++ {
+		if xPos == s.parts[i][0] && yPos == s.parts[i][1] {
 			return true
 		}
 	}
