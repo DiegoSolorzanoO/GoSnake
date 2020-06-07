@@ -29,7 +29,7 @@ func CreateCherry(g *Game, xCLimit float64, yCLimit float64) *Cherry {
 		eaten:  false,
 	}
 
-	cherry, _, _ := ebitenutil.NewImageFromFile("assets/cookie.png", ebiten.FilterDefault)
+	cherry, _, _ := ebitenutil.NewImageFromFile("assets/cherry.png", ebiten.FilterDefault)
 
 	c.cherry = *cherry
 
