@@ -12,21 +12,23 @@ var juegar = true
 type Game struct {
 	snake   *Snake
 	cherry  []*Cherry
+	cherryN int
 	playing bool
 	points  int
 	dotTime int
 }
 
 // NewGame : Starts a new game assigning variables
-func NewGame() Game {
+func NewGame(cherrys int) Game {
 	g := Game{
 		playing: true,
 		points:  0,
 		dotTime: 0,
 	}
 	g.snake = CreateSnake(&g)
-	arrayC := make([]*Cherry, 5)
-	for i := 0; i < 5; i++ {
+	g.cherryN = cherrys
+	arrayC := make([]*Cherry, g.cherryN)
+	for i := 0; i < g.cherryN; i++ {
 		arrayC[i] = CreateCherry(&g)
 		time.Sleep(20)
 	}
@@ -54,7 +56,7 @@ func (g *Game) Update() error {
 		//fmt.Println("game stopped")
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < g.cherryN; i++ {
 		if err := g.cherry[i].Update(g.dotTime); err != nil {
 			return err
 		}
@@ -68,7 +70,7 @@ func (g *Game) Draw(screen *ebiten.Image) error {
 	if err := g.snake.Draw(screen, g.dotTime); err != nil {
 		return err
 	}
-	for i := 0; i < 5; i++ {
+	for i := 0; i < g.cherryN; i++ {
 		if err := g.cherry[i].Draw(screen, g.dotTime); err != nil {
 			return err
 		}

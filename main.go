@@ -5,14 +5,18 @@ import (
 	"fmt"
 	_ "image/png"
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/hajimehoshi/ebiten"
 )
 
 var gm entities.Game
+var cherryN int
 
 func init() {
-	gm = entities.NewGame()
+	cherryN, _ = strconv.Atoi(os.Args[1])
+	gm = entities.NewGame(cherryN)
 }
 
 // Game interface of ebiten
@@ -42,6 +46,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func main() {
 	ebiten.SetWindowSize(600, 600)
 	ebiten.SetWindowTitle("Gosnakes")
+
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
