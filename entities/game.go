@@ -1,61 +1,54 @@
 package entities
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
-var juegar = true
-var food []*Cherry
-var foodAv int
-
 // Game : Main object of the scene. Parent of everything
 type Game struct {
-	snake   *Snake
-	cherry  []*Cherry
-	cherryN int
-	playing bool
-	points  int
-	dotTime int
+	snake       *Snake
+	hud         *Hud
+	cherries    []*Cherry
+	numCherries int
+	playing     bool
+	points      int
+	dotTime     int
 }
 
 // NewGame : Starts a new game assigning variables
 func NewGame(cherrys int) Game {
 	g := Game{
-		playing: true,
-		points:  0,
-		dotTime: 0,
+		playing:     true,
+		points:      0,
+		dotTime:     0,
+		numCherries: cherrys,
 	}
-	g.snake = CreateSnake(&g)
-	g.cherryN = cherrys
-	arrayC := make([]*Cherry, g.cherryN)
-	for i := 0; i < g.cherryN; i++ {
+	arrayC := make([]*Cherry, g.numCherries)
+	for i := 0; i < g.numCherries; i++ {
 		arrayC[i] = CreateCherry(&g)
 		time.Sleep(20)
 	}
-	food = arrayC
-	foodAv = g.cherryN
-	g.cherry = arrayC
+	g.cherries = arrayC
+	g.snake = CreateSnake(&g)
+	g.hud = CreateHud(&g)
 
 	return g
 }
 
+// End the game
 func (g *Game) End() {
 	g.playing = false
-	juegar = false
-	//fmt.Println(g.playing)
 }
 
 // Update the main process of the game
 func (g *Game) Update() error {
 
-	//fmt.Println(g.playing)
-	if juegar {
-		if foodAv == 0 {
-			juegar = false
+	if g.playing {
+		if g.numCherries == 0 {
+			g.playing = false
 		}
 
 		g.dotTime = (g.dotTime + 1) % 25
@@ -63,15 +56,14 @@ func (g *Game) Update() error {
 			return err
 		}
 		xPos, yPos := g.snake.getHeadPos()
-		for i := 0; i < len(food); i++ {
-			if xPos == food[i].xPos {
-				if yPos == food[i].yPos {
-					fmt.Println("Comida")
-					food[i].yPos = -20
-					food[i].xPos = -20
-					foodAv--
-					//g.snake.addPoint()
-				}
+		for i := 0; i < len(g.cherries); i++ {
+			if xPos == g.cherries[i].xPos && yPos == g.cherries[i].yPos {
+				g.cherries[i].yPos = -20
+				g.cherries[i].xPos = -20
+				g.hud.addPoint()
+				g.numCherries--
+				g.snake.addPoint()
+				break
 			}
 		}
 
@@ -80,8 +72,8 @@ func (g *Game) Update() error {
 
 	}
 
-	for i := 0; i < g.cherryN; i++ {
-		if err := g.cherry[i].Update(g.dotTime); err != nil {
+	for i := 0; i < g.numCherries; i++ {
+		if err := g.cherries[i].Update(g.dotTime); err != nil {
 			return err
 		}
 	}
@@ -94,16 +86,19 @@ func (g *Game) Draw(screen *ebiten.Image) error {
 	if err := g.snake.Draw(screen, g.dotTime); err != nil {
 		return err
 	}
-	for i := 0; i < g.cherryN; i++ {
-		if err := g.cherry[i].Draw(screen, g.dotTime); err != nil {
+	if err := g.hud.Draw(screen); err != nil {
+		return err
+	}
+	for i := 0; i < len(g.cherries); i++ {
+		if err := g.cherries[i].Draw(screen, g.dotTime); err != nil {
 			return err
 		}
 	}
-	if !juegar && foodAv != 0 {
-		ebitenutil.DebugPrint(screen, "game over")
+	if !g.playing && g.numCherries != 0 {
+		ebitenutil.DebugPrint(screen, "Game over")
 	}
 
-	if !juegar && foodAv == 0 {
+	if !g.playing && g.numCherries == 0 {
 		ebitenutil.DebugPrint(screen, "You Win")
 	}
 

@@ -15,6 +15,10 @@ var gm entities.Game
 var cherryN int
 
 func init() {
+	if len(os.Args) != 2 {
+		fmt.Println("Error. Cherry number missing")
+		os.Exit(3)
+	}
 	cherryN, _ = strconv.Atoi(os.Args[1])
 	gm = entities.NewGame(cherryN)
 }

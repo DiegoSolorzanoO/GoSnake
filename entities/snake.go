@@ -6,26 +6,25 @@ import (
 )
 
 var characterDO *ebiten.DrawImageOptions
-var xFP float64
-var yFP float64
-var losse = false
 
 // Snake : Object which the player controls
 type Snake struct {
-	game     *Game
-	numParts int
-	lastDir  string
-	headImg  ebiten.Image
-	tailImg  ebiten.Image
-	parts    [][]float64
+	game          *Game
+	numParts      int
+	lastDir       string
+	headImg       ebiten.Image
+	tailImg       ebiten.Image
+	parts         [][]float64
+	pointsWaiting int
 }
 
 // CreateSnake : Generates a snake
 func CreateSnake(g *Game) *Snake {
 	s := Snake{
-		game:     g,
-		numParts: 0,
-		lastDir:  "right",
+		game:          g,
+		numParts:      0,
+		lastDir:       "right",
+		pointsWaiting: 0,
 	}
 
 	s.parts = append(s.parts, []float64{300, 300})
@@ -55,15 +54,9 @@ func (s *Snake) Update(dotTime int) error {
 		return nil
 	}
 
-	xPos, yPos := s.getHeadPos()
-	if xPos < 0 || xPos > 580 {
-		if !losse {
-			s.game.End()
-		}
-
-	}
-	if yPos < 0 || yPos > 580 {
-		if !losse {
+	if dotTime == 1 {
+		xPos, yPos := s.getHeadPos()
+		if xPos < 0 || xPos > 580 || yPos < 0 || yPos > 580 || s.collisionWithHimself() {
 			s.game.End()
 		}
 	}
@@ -72,7 +65,9 @@ func (s *Snake) Update(dotTime int) error {
 
 // Draw the snake
 func (s *Snake) Draw(screen *ebiten.Image, dotTime int) error {
-	s.UpdatePos(dotTime)
+	if s.game.playing {
+		s.UpdatePos(dotTime)
+	}
 	characterDO = &ebiten.DrawImageOptions{}
 
 	xPos, yPos := s.getHeadPos()
@@ -87,17 +82,15 @@ func (s *Snake) Draw(screen *ebiten.Image, dotTime int) error {
 		screen.DrawImage(&s.tailImg, partDO)
 	}
 
-	//ebitenutil.DebugPrint(screen, s.lastDir)
-
 	return nil
 }
 
 // UpdatePos changes position values for the snake head
 func (s *Snake) UpdatePos(dotTime int) {
 	if dotTime == 1 {
-		// DEBUG the snake size
-		if s.numParts < 3 {
-			s.addPoint()
+		if s.pointsWaiting > 0 {
+			s.numParts++
+			s.pointsWaiting--
 		}
 		switch s.lastDir {
 		case "up":
@@ -114,7 +107,7 @@ func (s *Snake) UpdatePos(dotTime int) {
 }
 
 func (s *Snake) addPoint() {
-	s.numParts++
+	s.pointsWaiting++
 }
 
 func (s *Snake) getHeadPos() (float64, float64) {
@@ -134,4 +127,14 @@ func (s *Snake) translateHeadPos(newXPos, newYPos float64) {
 func (s *Snake) updateParts(newX, newY float64) {
 	s.parts = append([][]float64{[]float64{newX, newY}}, s.parts...)
 	s.parts = s.parts[:s.numParts+1]
+}
+
+func (s *Snake) collisionWithHimself() bool {
+	posX, posY := s.getHeadPos()
+	for i := 1; i < len(s.parts); i++ {
+		if posX == s.parts[i][0] && posY == s.parts[i][1] {
+			return true
+		}
+	}
+	return false
 }

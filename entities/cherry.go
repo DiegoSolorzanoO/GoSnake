@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -10,7 +9,6 @@ import (
 )
 
 // Cherry : Object which snakes eats
-
 type Cherry struct {
 	game   *Game
 	cherry ebiten.Image
@@ -38,9 +36,6 @@ func CreateCherry(g *Game) *Cherry {
 	random := rand.New(seed)
 	c.xPos = float64(random.Intn(c.xLimit) * 20)
 	c.yPos = float64(random.Intn(c.yLimit) * 20)
-	fmt.Print(c.xPos)
-	fmt.Print(" ")
-	fmt.Println(c.yPos)
 
 	return &c
 }
