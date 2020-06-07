@@ -1,8 +1,12 @@
 package entities
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten"
 )
+
+var juegar = true
 
 // Game : Main object of the scene. Parent of everything
 type Game struct {
@@ -30,17 +34,32 @@ func NewGame() Game {
 	return g
 }
 
+func (g *Game) End() {
+	g.playing = false
+	juegar = false
+	//fmt.Println(g.playing)
+}
+
 // Update the main process of the game
 func (g *Game) Update() error {
-	g.dotTime = (g.dotTime + 1) % 25
-	if err := g.snake.Update(g.dotTime); err != nil {
-		return err
+	//fmt.Println(g.playing)
+	if juegar {
+
+		g.dotTime = (g.dotTime + 1) % 25
+		if err := g.snake.Update(g.dotTime); err != nil {
+			return err
+		}
+	} else {
+		fmt.Println("game stopped")
 	}
+
+
 	for i := 0; i < 5; i++ {
 		if err := g.cherry[i].Update(g.dotTime); err != nil {
 			return err
 		}
 	}
+
 
 	return nil
 }

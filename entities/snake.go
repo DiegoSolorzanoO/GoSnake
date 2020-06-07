@@ -6,6 +6,9 @@ import (
 )
 
 var characterDO *ebiten.DrawImageOptions
+var xFP float64
+var yFP float64
+var losse = false
 
 // Snake : Object which the player controls
 type Snake struct {
@@ -51,6 +54,25 @@ func (s *Snake) Update(dotTime int) error {
 		s.lastDir = "left"
 		return nil
 	}
+	if s.xPos < 20 || s.xPos > 560 {
+		if !losse {
+			/*fmt.Println("pared")
+			losse = true
+			xFP = s.xPos
+			yFP = s.yPos*/
+			s.game.End()
+		}
+
+	}
+	if s.yPos < 20 || s.yPos > 560 {
+		if !losse {
+			/*fmt.Println("pared")
+			losse = true
+			xFP = s.xPos
+			yFP = s.yPos*/
+			s.game.End()
+		}
+	}
 	return nil
 }
 
@@ -58,8 +80,10 @@ func (s *Snake) Update(dotTime int) error {
 func (s *Snake) Draw(screen *ebiten.Image, dotTime int) error {
 	s.UpdatePos(dotTime)
 	characterDO = &ebiten.DrawImageOptions{}
+
 	xPos, yPos := s.getHeadPos()
 	characterDO.GeoM.Translate(xPos, yPos)
+
 	screen.DrawImage(&s.headImg, characterDO)
 
 	for i := 0; i < s.numParts; i++ {
@@ -91,6 +115,7 @@ func (s *Snake) UpdatePos(dotTime int) {
 		case "left":
 			s.translateHeadPos(-20, 0)
 		}
+
 	}
 }
 
