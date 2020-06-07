@@ -56,13 +56,13 @@ func (s *Snake) Update(dotTime int) error {
 	}
 
 	xPos, yPos := s.getHeadPos()
-	if xPos < 20 || xPos > 560 {
+	if xPos < 0 || xPos > 580 {
 		if !losse {
 			s.game.End()
 		}
 
 	}
-	if yPos < 20 || yPos > 560 {
+	if yPos < 0 || yPos > 580 {
 		if !losse {
 			s.game.End()
 		}
@@ -87,7 +87,7 @@ func (s *Snake) Draw(screen *ebiten.Image, dotTime int) error {
 		screen.DrawImage(&s.tailImg, partDO)
 	}
 
-	ebitenutil.DebugPrint(screen, s.lastDir)
+	//ebitenutil.DebugPrint(screen, s.lastDir)
 
 	return nil
 }
@@ -96,9 +96,9 @@ func (s *Snake) Draw(screen *ebiten.Image, dotTime int) error {
 func (s *Snake) UpdatePos(dotTime int) {
 	if dotTime == 1 {
 		// DEBUG the snake size
-		// if s.numParts < 8 {
-		// 	s.addPoint()
-		// }
+		if s.numParts < 3 {
+			s.addPoint()
+		}
 		switch s.lastDir {
 		case "up":
 			s.translateHeadPos(0, -20)
