@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -13,19 +14,19 @@ import (
 type Cherry struct {
 	game   *Game
 	cherry ebiten.Image
-	xLimit float64
-	yLimit float64
+	xLimit int
+	yLimit int
 	xPos   float64
 	yPos   float64
 	eaten  bool
 }
 
 // CreateCherry : Generates a Cherry
-func CreateCherry(g *Game, xCLimit float64, yCLimit float64) *Cherry {
+func CreateCherry(g *Game) *Cherry {
 	c := Cherry{
 		game:   g,
-		xLimit: xCLimit,
-		yLimit: yCLimit,
+		xLimit: 30,
+		yLimit: 30,
 		eaten:  false,
 	}
 
@@ -35,8 +36,11 @@ func CreateCherry(g *Game, xCLimit float64, yCLimit float64) *Cherry {
 
 	seed := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(seed)
-	c.xPos = random.Float64() * c.xLimit
-	c.yPos = random.Float64() * c.yLimit
+	c.xPos = float64(random.Intn(c.xLimit) * 20)
+	c.yPos = float64(random.Intn(c.yLimit) * 20)
+	fmt.Print(c.xPos)
+	fmt.Print(" ")
+	fmt.Println(c.yPos)
 
 	return &c
 }

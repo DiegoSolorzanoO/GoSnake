@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/hajimehoshi/ebiten"
 )
@@ -27,7 +27,8 @@ func NewGame() Game {
 	g.snake = CreateSnake(&g)
 	arrayC := make([]*Cherry, 5)
 	for i := 0; i < 5; i++ {
-		arrayC[i] = CreateCherry(&g, 600, 600)
+		arrayC[i] = CreateCherry(&g)
+		time.Sleep(20)
 	}
 	g.cherry = arrayC
 
@@ -50,16 +51,14 @@ func (g *Game) Update() error {
 			return err
 		}
 	} else {
-		fmt.Println("game stopped")
+		//fmt.Println("game stopped")
 	}
-
 
 	for i := 0; i < 5; i++ {
 		if err := g.cherry[i].Update(g.dotTime); err != nil {
 			return err
 		}
 	}
-
 
 	return nil
 }
