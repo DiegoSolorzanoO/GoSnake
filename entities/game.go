@@ -13,6 +13,7 @@ type Game struct {
 	hud         *Hud
 	cherries    []*Cherry
 	numCherries int
+	enemies     []*EnemySnake
 	playing     bool
 	points      int
 	dotTime     int
@@ -31,7 +32,13 @@ func NewGame(cherrys int) Game {
 		arrayC[i] = CreateCherry(&g)
 		time.Sleep(20)
 	}
+	arrayEnemies := make([]*EnemySnake, 5)
+	for i := 0; i < len(arrayEnemies); i++ {
+		arrayEnemies[i] = CreateEnemySnake(&g)
+		time.Sleep(20)
+	}
 	g.cherries = arrayC
+	g.enemies = arrayEnemies
 	g.snake = CreateSnake(&g)
 	g.hud = CreateHud(&g)
 
@@ -51,9 +58,14 @@ func (g *Game) Update() error {
 			g.playing = false
 		}
 
-		g.dotTime = (g.dotTime + 1) % 25
+		g.dotTime = (g.dotTime + 1) % 20
 		if err := g.snake.Update(g.dotTime); err != nil {
 			return err
+		}
+		for _, enemy := range g.enemies {
+			if err := enemy.Update(g.dotTime); err != nil {
+				return err
+			}
 		}
 		xPos, yPos := g.snake.getHeadPos()
 		for i := 0; i < len(g.cherries); i++ {
@@ -85,6 +97,11 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) error {
 	if err := g.snake.Draw(screen, g.dotTime); err != nil {
 		return err
+	}
+	for _, enemy := range g.enemies {
+		if err := enemy.Draw(screen, g.dotTime); err != nil {
+			return err
+		}
 	}
 	if err := g.hud.Draw(screen); err != nil {
 		return err
