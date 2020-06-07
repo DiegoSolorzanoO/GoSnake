@@ -54,22 +54,16 @@ func (s *Snake) Update(dotTime int) error {
 		s.lastDir = "left"
 		return nil
 	}
-	if s.xPos < 20 || s.xPos > 560 {
+
+	xPos, yPos := s.getHeadPos()
+	if xPos < 20 || xPos > 560 {
 		if !losse {
-			/*fmt.Println("pared")
-			losse = true
-			xFP = s.xPos
-			yFP = s.yPos*/
 			s.game.End()
 		}
 
 	}
-	if s.yPos < 20 || s.yPos > 560 {
+	if yPos < 20 || yPos > 560 {
 		if !losse {
-			/*fmt.Println("pared")
-			losse = true
-			xFP = s.xPos
-			yFP = s.yPos*/
 			s.game.End()
 		}
 	}
