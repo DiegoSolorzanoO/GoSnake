@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"image/color"
 	"strconv"
 
@@ -48,8 +49,7 @@ func (h *Hud) EndGame(screen *ebiten.Image) {
 		screenH := screen.Bounds().Dy()
 
 		text.Draw(screen, goText, basicfont.Face7x13, screenW/2-textW/2, screenH/2+textH/2, color.White)
-	}
-	if h.points == h.highestScore {
+	} else if h.points == h.highestScore {
 		goText := "YOU WIN!!"
 		textW, textH := textDimension(goText)
 		screenW := screen.Bounds().Dx()
@@ -63,7 +63,6 @@ func (h *Hud) EndGame(screen *ebiten.Image) {
 func (h *Hud) Draw(screen *ebiten.Image) error {
 	text.Draw(screen, "Score: "+strconv.Itoa(h.points), basicfont.Face7x13, 20, 20, color.White)
 	if !h.game.playing {
-		h.EndGame(screen)
 		eatedCherrys := 0
 		max := 0
 		for i := 0; i < len(h.game.enemies); i++ {
@@ -79,7 +78,30 @@ func (h *Hud) Draw(screen *ebiten.Image) error {
 		}
 		h.highestScore = max
 		h.eatedCherrys = eatedCherrys
+		fmt.Println(eatedCherrys)
+		h.EndGame(screen)
 	}
 
 	return nil
+}
+
+func (h *Hud) End2(screen *ebiten.Image) {
+
+	eatedCherrys := 0
+	max := 0
+	for i := 0; i < len(h.game.enemies); i++ {
+		eatedCherrys += h.game.enemies[i].points
+		if max < h.game.enemies[i].points {
+			max = h.game.enemies[i].points
+		}
+	}
+
+	eatedCherrys += h.game.snake.points
+	if max < h.game.snake.points {
+		max = h.game.snake.points
+	}
+	h.highestScore = max
+	h.eatedCherrys = eatedCherrys
+	fmt.Println(eatedCherrys)
+	h.EndGame(screen)
 }
