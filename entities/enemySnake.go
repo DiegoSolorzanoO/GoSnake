@@ -10,23 +10,28 @@ import (
 
 // EnemySnake : Snake object for enemies
 type EnemySnake struct {
-	game     *Game
-	numParts int
-	lastDir  string
-	headImg  ebiten.Image
-	tailImg  ebiten.Image
-	parts    [][]float64
-	seed     rand.Source
+	game          *Game
+	numParts      int
+	lastDir       string
+	headImg       ebiten.Image
+	tailImg       ebiten.Image
+	parts         [][]float64
+	seed          rand.Source
+	pointsWaiting int
+	points        int
+	behavior      chan int
 }
 
 // CreateEnemySnake : Generates an enemy snake
 func CreateEnemySnake(g *Game) *EnemySnake {
 	s := EnemySnake{
-		game:     g,
-		numParts: 0,
-		lastDir:  "right",
+		game:          g,
+		numParts:      0,
+		lastDir:       "right",
+		pointsWaiting: 0,
 	}
 
+	s.behavior = make(chan int)
 	s.seed = rand.NewSource(time.Now().UnixNano())
 	random := rand.New(s.seed)
 	iniX := float64(random.Intn(30) * 20)
@@ -41,6 +46,18 @@ func CreateEnemySnake(g *Game) *EnemySnake {
 	s.tailImg = *tailimg
 
 	return &s
+}
+
+//PIPE FUNCTION
+
+func (s *EnemySnake) Behavior() error {
+	dotTime := <-s.behavior
+	for {
+		s.Update(dotTime)
+		dotTime = <-s.behavior
+	}
+
+	return nil
 }
 
 // Update : Logical update of the snake
@@ -67,14 +84,14 @@ func (s *EnemySnake) Update(dotTime int) error {
 				}
 				return nil
 			case 2:
-				if posY > 0 && s.lastDir != "down" {
+				if posY > 20 && s.lastDir != "down" {
 					s.lastDir = "up"
 				} else {
 					s.lastDir = "down"
 				}
 				return nil
 			case 3:
-				if posX > 0 && s.lastDir != "right" {
+				if posX > 20 && s.lastDir != "right" {
 					s.lastDir = "left"
 				} else {
 					s.lastDir = "right"
@@ -134,8 +151,9 @@ func (s *EnemySnake) Draw(screen *ebiten.Image, dotTime int) error {
 // UpdatePos changes position values for the snake head
 func (s *EnemySnake) UpdatePos(dotTime int) {
 	if dotTime == 1 {
-		if s.numParts < 7 {
+		if s.pointsWaiting > 0 {
 			s.numParts++
+			s.pointsWaiting--
 		}
 		switch s.lastDir {
 		case "up":
@@ -149,6 +167,11 @@ func (s *EnemySnake) UpdatePos(dotTime int) {
 		}
 
 	}
+}
+
+func (s *EnemySnake) addPoint() {
+	s.points++
+	s.pointsWaiting++
 }
 
 func (s *EnemySnake) getHeadPos() (float64, float64) {
