@@ -37,7 +37,7 @@ func textDimension(text string) (w int, h int) {
 
 // EndGame shows the final result
 func (h *Hud) EndGame(screen *ebiten.Image) {
-	if h.points != h.maxPoints {
+	if h.points != h.maxPoints || h.maxPoints == 0 {
 		goText := "GAME OVER"
 		textW, textH := textDimension(goText)
 		screenW := screen.Bounds().Dx()
@@ -65,6 +65,10 @@ func (h *Hud) Draw(screen *ebiten.Image) error {
 			if max < h.game.enemies[i].points {
 				max = h.game.enemies[i].points
 			}
+		}
+
+		if max < h.game.snake.points {
+			max = h.game.snake.points
 		}
 		h.maxPoints = max
 	}

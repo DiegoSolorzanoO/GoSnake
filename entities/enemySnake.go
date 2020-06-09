@@ -103,7 +103,7 @@ func (s *EnemySnake) Update(dotTime int) error {
 			s.lastDir = "left"
 			return nil
 		}
-		if posX == 0 {
+		if posX == 20 {
 			s.lastDir = "right"
 			return nil
 		}
@@ -111,7 +111,7 @@ func (s *EnemySnake) Update(dotTime int) error {
 			s.lastDir = "up"
 			return nil
 		}
-		if posY == 0 {
+		if posY == 20 {
 			s.lastDir = "down"
 			return nil
 		}
