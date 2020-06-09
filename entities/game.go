@@ -22,7 +22,7 @@ type Game struct {
 }
 
 // NewGame : Starts a new game assigning variables
-func NewGame(cherrys int, wg *sync.WaitGroup) Game {
+func NewGame(cherrys int) Game {
 	g := Game{
 		playing:     true,
 		points:      0,
@@ -42,15 +42,16 @@ func NewGame(cherrys int, wg *sync.WaitGroup) Game {
 	enemiesChan := make([]chan int, 5)
 	for i := 0; i < len(enemiesChan); i++ {
 		enemiesChan[i] = make(chan int)
-		go arrayEnemies[i].Behavior
+		arrayEnemies[i].behavior = enemiesChan[i]
+		go arrayEnemies[i].Behavior()
 		time.Sleep(20)
 	}
 
+	g.enemiesChan = enemiesChan
 	g.cherries = arrayC
 	g.enemies = arrayEnemies
 	g.snake = CreateSnake(&g)
 	g.hud = CreateHud(&g, cherrys)
-	g.wg = wg
 
 	return g
 }
@@ -72,8 +73,8 @@ func (g *Game) Update() error {
 		if err := g.snake.Update(g.dotTime); err != nil {
 			return err
 		}
-		for _, enemy := range g.enemies {
-
+		for i := 0; i < len(g.enemiesChan); i++ {
+			g.enemiesChan[i] <- g.dotTime
 		}
 		xPos, yPos := g.snake.getHeadPos()
 		for i := 0; i < len(g.cherries); i++ {
