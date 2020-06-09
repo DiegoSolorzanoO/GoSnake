@@ -137,7 +137,7 @@ func (g *Game) Draw(screen *ebiten.Image) error {
 	}
 
 	if g.numCherries == 0 {
-		g.hud.EndGame(screen)
+		g.hud.End2(screen)
 	}
 
 	return nil
