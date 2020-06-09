@@ -56,6 +56,13 @@ func (h *Hud) EndGame(screen *ebiten.Image) {
 		screenH := screen.Bounds().Dy()
 
 		text.Draw(screen, goText, basicfont.Face7x13, screenW/2-textW/2, screenH/2+textH/2, color.White)
+	} else {
+		goText := "GAME OVER"
+		textW, textH := textDimension(goText)
+		screenW := screen.Bounds().Dx()
+		screenH := screen.Bounds().Dy()
+
+		text.Draw(screen, goText, basicfont.Face7x13, screenW/2-textW/2, screenH/2+textH/2, color.White)
 	}
 }
 
