@@ -60,6 +60,13 @@ func (h *Hud) Draw(screen *ebiten.Image) error {
 	text.Draw(screen, "Score: "+strconv.Itoa(h.points), basicfont.Face7x13, 20, 20, color.White)
 	if !h.game.playing {
 		h.EndGame(screen)
+		max := 0
+		for i := 0; i < len(h.game.enemies); i++ {
+			if max < h.game.enemies[i].points {
+				max = h.game.enemies[i].points
+			}
+		}
+		h.maxPoints = max
 	}
 
 	return nil

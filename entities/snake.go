@@ -16,6 +16,8 @@ type Snake struct {
 	tailImg       ebiten.Image
 	parts         [][]float64
 	pointsWaiting int
+	points        int
+	behavior      chan int
 }
 
 // CreateSnake : Generates a snake
@@ -27,6 +29,7 @@ func CreateSnake(g *Game) *Snake {
 		pointsWaiting: 0,
 	}
 
+	s.behavior = make(chan int)
 	s.parts = append(s.parts, []float64{300, 300})
 
 	headimg, _, _ := ebitenutil.NewImageFromFile("assets/playerhead.png", ebiten.FilterDefault)
@@ -36,6 +39,17 @@ func CreateSnake(g *Game) *Snake {
 	s.tailImg = *tailimg
 
 	return &s
+}
+
+//Pipe
+func (s *Snake) Behavior() error {
+	dotTime := <-s.behavior
+	for {
+		s.Update(dotTime)
+		dotTime = <-s.behavior
+	}
+
+	return nil
 }
 
 // Update : Logical update of the snake
@@ -107,6 +121,7 @@ func (s *Snake) UpdatePos(dotTime int) {
 }
 
 func (s *Snake) addPoint() {
+	s.points++
 	s.pointsWaiting++
 }
 

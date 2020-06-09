@@ -13,14 +13,36 @@ import (
 
 var gm entities.Game
 var cherryN int
+var enemies int
 
 func init() {
-	if len(os.Args) != 2 {
+	if len(os.Args) < 2 {
 		fmt.Println("Error. Cherry number missing")
 		os.Exit(3)
 	}
-	cherryN, _ = strconv.Atoi(os.Args[1])
-	gm = entities.NewGame(cherryN)
+
+	if len(os.Args) < 3 {
+		fmt.Println("Error. Enemies number missing")
+		os.Exit(3)
+	}
+
+	if len(os.Args) > 3 {
+		fmt.Println("Error. Too many arguments")
+		os.Exit(3)
+	}
+	var err error
+	cherryN, err = strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Println("Error. Only numeric values for cherrys")
+		os.Exit(3)
+	}
+
+	enemies, err = strconv.Atoi(os.Args[2])
+	if err != nil {
+		fmt.Println("Error. Only numeric values for enemies")
+		os.Exit(3)
+	}
+	gm = entities.NewGame(cherryN, enemies)
 
 }
 

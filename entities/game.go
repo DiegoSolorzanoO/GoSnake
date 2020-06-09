@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
@@ -10,36 +9,38 @@ import (
 // Game : Main object of the scene. Parent of everything
 type Game struct {
 	snake       *Snake
+	snakeChan   chan int
 	hud         *Hud
 	cherries    []*Cherry
 	numCherries int
+	numEnemies  int
 	enemies     []*EnemySnake
 	enemiesChan []chan int
 	playing     bool
 	points      int
 	dotTime     int
-	wg          *sync.WaitGroup
 }
 
 // NewGame : Starts a new game assigning variables
-func NewGame(cherrys int) Game {
+func NewGame(cherrys int, enemies int) Game {
 	g := Game{
 		playing:     true,
 		points:      0,
 		dotTime:     0,
 		numCherries: cherrys,
+		numEnemies:  enemies,
 	}
 	arrayC := make([]*Cherry, g.numCherries)
 	for i := 0; i < g.numCherries; i++ {
 		arrayC[i] = CreateCherry(&g)
 		time.Sleep(20)
 	}
-	arrayEnemies := make([]*EnemySnake, 5)
+	arrayEnemies := make([]*EnemySnake, g.numEnemies)
 	for i := 0; i < len(arrayEnemies); i++ {
 		arrayEnemies[i] = CreateEnemySnake(&g)
 		time.Sleep(20)
 	}
-	enemiesChan := make([]chan int, 5)
+	enemiesChan := make([]chan int, g.numEnemies)
 	for i := 0; i < len(enemiesChan); i++ {
 		enemiesChan[i] = make(chan int)
 		arrayEnemies[i].behavior = enemiesChan[i]
@@ -51,6 +52,8 @@ func NewGame(cherrys int) Game {
 	g.cherries = arrayC
 	g.enemies = arrayEnemies
 	g.snake = CreateSnake(&g)
+	g.snakeChan = make(chan int)
+	go g.snake.Behavior()
 	g.hud = CreateHud(&g, cherrys)
 
 	return g
@@ -71,7 +74,7 @@ func (g *Game) Update() error {
 
 		g.dotTime = (g.dotTime + 1) % 20
 		if err := g.snake.Update(g.dotTime); err != nil {
-			return err
+			g.snakeChan <- g.dotTime
 		}
 		for i := 0; i < len(g.enemiesChan); i++ {
 			g.enemiesChan[i] <- g.dotTime
@@ -88,9 +91,21 @@ func (g *Game) Update() error {
 			}
 		}
 
+		for j := 0; j < len(g.enemies); j++ {
+			xPos, yPos := g.enemies[j].getHeadPos()
+			for i := 0; i < len(g.cherries); i++ {
+				if xPos == g.cherries[i].xPos && yPos == g.cherries[i].yPos {
+					g.cherries[i].yPos = -20
+					g.cherries[i].xPos = -20
+					g.numCherries--
+					g.enemies[j].addPoint()
+					break
+				}
+			}
+		}
+
 	} else {
 		//fmt.Println("game stopped")
-		g.wg.Done()
 	}
 
 	for i := 0; i < g.numCherries; i++ {
