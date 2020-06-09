@@ -17,6 +17,7 @@ type EnemySnake struct {
 	tailImg  ebiten.Image
 	parts    [][]float64
 	seed     rand.Source
+	behavior chan int
 }
 
 // CreateEnemySnake : Generates an enemy snake
@@ -27,6 +28,7 @@ func CreateEnemySnake(g *Game) *EnemySnake {
 		lastDir:  "right",
 	}
 
+	s.behavior = make(chan int)
 	s.seed = rand.NewSource(time.Now().UnixNano())
 	random := rand.New(s.seed)
 	iniX := float64(random.Intn(30) * 20)
@@ -41,6 +43,79 @@ func CreateEnemySnake(g *Game) *EnemySnake {
 	s.tailImg = *tailimg
 
 	return &s
+}
+
+//PIPE FUNCTION
+
+func (s *EnemySnake) Behavior(dotTime int) error {
+	s.behavior <- dotTime
+	defer close(s.behavior)
+	go func() {
+		value := <-s.behavior
+		if value == 1 {
+			random := rand.New(s.seed)
+			action := random.Intn(4)
+			changingDirection := random.Intn(3)
+			posX, posY := s.getHeadPos()
+			if changingDirection == 0 {
+				switch action {
+				case 0:
+					if posX < 580 && s.lastDir != "left" {
+						s.lastDir = "right"
+					} else {
+						s.lastDir = "left"
+					}
+					return
+				case 1:
+					if posY < 580 && s.lastDir != "up" {
+						s.lastDir = "down"
+					} else {
+						s.lastDir = "up"
+					}
+					return
+				case 2:
+					if posY > 0 && s.lastDir != "down" {
+						s.lastDir = "up"
+					} else {
+						s.lastDir = "down"
+					}
+					return
+				case 3:
+					if posX > 0 && s.lastDir != "right" {
+						s.lastDir = "left"
+					} else {
+						s.lastDir = "right"
+					}
+					return
+				}
+			}
+			if posX >= 580 {
+				s.lastDir = "left"
+				return
+			}
+			if posX == 0 {
+				s.lastDir = "right"
+				return
+			}
+			if posY == 580 {
+				s.lastDir = "up"
+				return
+			}
+			if posY == 0 {
+				s.lastDir = "down"
+				return
+			}
+		}
+
+		if value == 1 {
+			xPos, yPos := s.game.snake.getHeadPos()
+			if s.collisionWithPlayer(xPos, yPos) {
+				s.game.End()
+			}
+		}
+	}()
+
+	return nil
 }
 
 // Update : Logical update of the snake

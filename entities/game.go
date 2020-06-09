@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
@@ -13,13 +14,15 @@ type Game struct {
 	cherries    []*Cherry
 	numCherries int
 	enemies     []*EnemySnake
+	enemiesChan []chan int
 	playing     bool
 	points      int
 	dotTime     int
+	wg          *sync.WaitGroup
 }
 
 // NewGame : Starts a new game assigning variables
-func NewGame(cherrys int) Game {
+func NewGame(cherrys int, wg *sync.WaitGroup) Game {
 	g := Game{
 		playing:     true,
 		points:      0,
@@ -36,10 +39,18 @@ func NewGame(cherrys int) Game {
 		arrayEnemies[i] = CreateEnemySnake(&g)
 		time.Sleep(20)
 	}
+	enemiesChan := make([]chan int, 5)
+	for i := 0; i < len(enemiesChan); i++ {
+		enemiesChan[i] = make(chan int)
+		go arrayEnemies[i].Behavior
+		time.Sleep(20)
+	}
+
 	g.cherries = arrayC
 	g.enemies = arrayEnemies
 	g.snake = CreateSnake(&g)
 	g.hud = CreateHud(&g, cherrys)
+	g.wg = wg
 
 	return g
 }
@@ -62,9 +73,7 @@ func (g *Game) Update() error {
 			return err
 		}
 		for _, enemy := range g.enemies {
-			if err := enemy.Update(g.dotTime); err != nil {
-				return err
-			}
+
 		}
 		xPos, yPos := g.snake.getHeadPos()
 		for i := 0; i < len(g.cherries); i++ {
@@ -80,7 +89,7 @@ func (g *Game) Update() error {
 
 	} else {
 		//fmt.Println("game stopped")
-
+		g.wg.Done()
 	}
 
 	for i := 0; i < g.numCherries; i++ {

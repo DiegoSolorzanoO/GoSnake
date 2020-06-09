@@ -7,12 +7,14 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten"
 )
 
 var gm entities.Game
 var cherryN int
+var wg sync.WaitGroup
 
 func init() {
 	if len(os.Args) != 2 {
@@ -20,7 +22,7 @@ func init() {
 		os.Exit(3)
 	}
 	cherryN, _ = strconv.Atoi(os.Args[1])
-	gm = entities.NewGame(cherryN)
+
 }
 
 // Game interface of ebiten
@@ -48,10 +50,13 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func main() {
+	wg.Add(1)
+	gm = entities.NewGame(cherryN, &wg)
 	ebiten.SetWindowSize(600, 600)
 	ebiten.SetWindowTitle("Gosnakes")
 
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
+	wg.Wait()
 }
