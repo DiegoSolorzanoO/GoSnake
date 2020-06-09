@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"fmt"
 	"image/color"
 	"strconv"
 
@@ -85,7 +84,6 @@ func (h *Hud) Draw(screen *ebiten.Image) error {
 		}
 		h.highestScore = max
 		h.eatedCherrys = eatedCherrys
-		fmt.Println(eatedCherrys)
 		h.EndGame(screen)
 	}
 
@@ -109,6 +107,5 @@ func (h *Hud) End2(screen *ebiten.Image) {
 	}
 	h.highestScore = max
 	h.eatedCherrys = eatedCherrys
-	fmt.Println(eatedCherrys)
 	h.EndGame(screen)
 }
