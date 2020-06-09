@@ -31,11 +31,11 @@ The `entities/` folder is the most important one, this is where the game logic r
 * Snake [snake.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/snake.go)
 * Cherry [cherry.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/cherry.go)
 * Enemy (instances of snake) [enemySnake.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/enemySnake.go)
-* A Hud [hud.go] (https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/hud.go)
+* A Hud [hud.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/hud.go)
 
 `game.go` will have all `ebiten.Game` interface methods implemented, in addition to the following functions and methods 
-* NewGame: function that instanciates a new game
-* End: method to end game.
+* **NewGame**: function that instanciates a new game
+* **End**: method to end game.
 * Logic behind cherry eats
 
 As we know, we need to implement the `Game` interface. This is done in `main.go` for simplicity reasons, but inside `game.go` we will code the functionality of the structure.
