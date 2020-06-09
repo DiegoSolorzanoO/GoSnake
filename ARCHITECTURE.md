@@ -27,9 +27,9 @@ We organize the project into three main folders and the `main.go` file:
 Since Ebiten's engine mostly consists of image and graphics rendering, we need an `assets/` folder. This is where all our image resources for our GUI will be placed.
 
 The `entities/` folder is the most important one, this is where the game logic resides. The main entities needed for the game are:
-* Game [game.go] (https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/game.go)
-* Snake [snake.go] (https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/snake.go)
-* Cherry [cherry.go] (https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/cherry.go)
+* Game [game.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/game.go)
+* Snake [snake.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/snake.go)
+* Cherry [cherry.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/cherry.go)
 * Enemy (instances of snake) [enemySnake.go](https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/enemySnake.go)
 * A Hud [hud.go] (https://github.com/DiegoSolorzanoO/GoSnake/blob/master/entities/hud.go)
 
