@@ -56,7 +56,6 @@ func (s *EnemySnake) Behavior() error {
 		s.Update(dotTime)
 		dotTime = <-s.behavior
 	}
-
 	return nil
 }
 
@@ -66,9 +65,9 @@ func (s *EnemySnake) Update(dotTime int) error {
 		random := rand.New(s.seed)
 		action := random.Intn(4)
 		changingDirection := random.Intn(3)
-		posX, posY := s.getHeadPos()
+		posX, posY := s.getHeadPos() //position of the snakes head
 		if changingDirection == 0 {
-			switch action {
+			switch action { //checks the boundings of the map
 			case 0:
 				if posX < 560 && s.lastDir != "left" {
 					s.lastDir = "right"
@@ -99,7 +98,7 @@ func (s *EnemySnake) Update(dotTime int) error {
 				return nil
 			}
 		}
-		if posX >= 560 {
+		if posX >= 560 { //moves the enemy to avoid getting out of bounds
 			s.lastDir = "left"
 			return nil
 		}
@@ -117,7 +116,7 @@ func (s *EnemySnake) Update(dotTime int) error {
 		}
 	}
 
-	if dotTime == 1 {
+	if dotTime == 1 { //checks collision with enemy snake
 		xPos, yPos := s.game.snake.getHeadPos()
 		if s.collisionWithPlayer(xPos, yPos) {
 			s.game.End()
@@ -132,12 +131,9 @@ func (s *EnemySnake) Draw(screen *ebiten.Image, dotTime int) error {
 		s.UpdatePos(dotTime)
 	}
 	enemyDO := &ebiten.DrawImageOptions{}
-
 	xPos, yPos := s.getHeadPos()
 	enemyDO.GeoM.Translate(xPos, yPos)
-
 	screen.DrawImage(&s.headImg, enemyDO)
-
 	for i := 0; i < s.numParts; i++ {
 		partDO := &ebiten.DrawImageOptions{}
 		xPos, yPos := s.getPartPos(i)

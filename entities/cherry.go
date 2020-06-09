@@ -27,23 +27,19 @@ func CreateCherry(g *Game) *Cherry {
 		yLimit: 30,
 		eaten:  false,
 	}
-
-	cherry, _, _ := ebitenutil.NewImageFromFile("assets/cherry.png", ebiten.FilterDefault)
-
+	cherry, _, _ := ebitenutil.NewImageFromFile("assets/cherry.png", ebiten.FilterDefault) //loads the cheryr img
 	c.cherry = *cherry
-
 	seed := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(seed)
-	c.xPos = float64(random.Intn(c.xLimit) * 20)
+	c.xPos = float64(random.Intn(c.xLimit) * 20) //generates a random point for cherries to appear
 	c.yPos = float64(random.Intn(c.yLimit) * 20)
-
 	return &c
 }
 
 // Update : Logical update of the snake
 func (c *Cherry) Update(dotTime int) error {
 	if c.eaten == false {
-		return nil // Return aviso de que ya se la comieron
+		return nil // Notify that a cherry has been eaten
 	}
 	return nil
 }
@@ -52,7 +48,6 @@ func (c *Cherry) Update(dotTime int) error {
 func (c *Cherry) Draw(screen *ebiten.Image, dotTime int) error {
 	characterDO = &ebiten.DrawImageOptions{}
 	characterDO.GeoM.Translate(c.xPos, c.yPos)
-	screen.DrawImage(&c.cherry, characterDO)
-
+	screen.DrawImage(&c.cherry, characterDO) //every cherry is drawn here with its specific point
 	return nil
 }

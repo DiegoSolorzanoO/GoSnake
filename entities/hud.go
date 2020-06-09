@@ -39,7 +39,7 @@ func textDimension(text string) (w int, h int) {
 }
 
 // EndGame shows the final result
-func (h *Hud) EndGame(screen *ebiten.Image) {
+func (h *Hud) EndGame(screen *ebiten.Image) { //method that checks the end of the game and the display
 
 	if h.eatedCherrys != h.maxPoints {
 		goText := "GAME OVER"
@@ -71,7 +71,7 @@ func (h *Hud) Draw(screen *ebiten.Image) error {
 	if !h.game.playing {
 		eatedCherrys := 0
 		max := 0
-		for i := 0; i < len(h.game.enemies); i++ {
+		for i := 0; i < len(h.game.enemies); i++ { //update the scorde hud
 			eatedCherrys += h.game.enemies[i].points
 			if max < h.game.enemies[i].points {
 				max = h.game.enemies[i].points

@@ -16,7 +16,7 @@ var cherryN int
 var enemies int
 
 func init() {
-	if len(os.Args) < 2 {
+	if len(os.Args) < 2 { //check the arguments are correct
 		fmt.Println("Error. Cherry number missing")
 		os.Exit(3)
 	}

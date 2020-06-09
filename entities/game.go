@@ -30,12 +30,12 @@ func NewGame(cherrys int, enemies int) Game {
 		numCherries: cherrys,
 		numEnemies:  enemies,
 	}
-	arrayC := make([]*Cherry, g.numCherries)
+	arrayC := make([]*Cherry, g.numCherries) //store all the cherries
 	for i := 0; i < g.numCherries; i++ {
 		arrayC[i] = CreateCherry(&g)
 		time.Sleep(20)
 	}
-	arrayEnemies := make([]*EnemySnake, g.numEnemies)
+	arrayEnemies := make([]*EnemySnake, g.numEnemies) //store the enemies
 	for i := 0; i < len(arrayEnemies); i++ {
 		arrayEnemies[i] = CreateEnemySnake(&g)
 		time.Sleep(20)
@@ -47,31 +47,28 @@ func NewGame(cherrys int, enemies int) Game {
 		go arrayEnemies[i].Behavior()
 		time.Sleep(20)
 	}
-
-	g.enemiesChan = enemiesChan
+	g.enemiesChan = enemiesChan //make the references for the class
 	g.cherries = arrayC
 	g.enemies = arrayEnemies
 	g.snake = CreateSnake(&g)
 	g.snakeChan = make(chan int)
 	go g.snake.Behavior()
 	g.hud = CreateHud(&g, cherrys)
-
 	return g
 }
 
 // End the game
 func (g *Game) End() {
-	g.playing = false
+	g.playing = false //booleand to keep playing
 }
 
 // Update the main process of the game
 func (g *Game) Update() error {
-
 	if g.playing {
-		if g.numCherries == 0 {
+		if g.numCherries == 0 { //when all cherries has been eating the game ends
 			g.playing = false
 		}
-
+		//update the channels
 		g.dotTime = (g.dotTime + 1) % 20
 		if err := g.snake.Update(g.dotTime); err != nil {
 			g.snakeChan <- g.dotTime
@@ -81,7 +78,7 @@ func (g *Game) Update() error {
 		}
 		xPos, yPos := g.snake.getHeadPos()
 		for i := 0; i < len(g.cherries); i++ {
-			if xPos == g.cherries[i].xPos && yPos == g.cherries[i].yPos {
+			if xPos == g.cherries[i].xPos && yPos == g.cherries[i].yPos { //if snake eats a cherry grows
 				g.cherries[i].yPos = -20
 				g.cherries[i].xPos = -20
 				g.hud.addPoint()
@@ -90,8 +87,7 @@ func (g *Game) Update() error {
 				break
 			}
 		}
-
-		for j := 0; j < len(g.enemies); j++ {
+		for j := 0; j < len(g.enemies); j++ { //if enemi snake eats cherry grows
 			xPos, yPos := g.enemies[j].getHeadPos()
 			for i := 0; i < len(g.cherries); i++ {
 				if xPos == g.cherries[i].xPos && yPos == g.cherries[i].yPos {
@@ -103,17 +99,14 @@ func (g *Game) Update() error {
 				}
 			}
 		}
-
 	} else {
 		//fmt.Println("game stopped")
 	}
-
 	for i := 0; i < g.numCherries; i++ {
 		if err := g.cherries[i].Update(g.dotTime); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -135,10 +128,8 @@ func (g *Game) Draw(screen *ebiten.Image) error {
 			return err
 		}
 	}
-
 	if g.numCherries == 0 {
 		g.hud.End2(screen)
 	}
-
 	return nil
 }
