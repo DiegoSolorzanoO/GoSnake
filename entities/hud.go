@@ -78,6 +78,7 @@ func (h *Hud) Draw(screen *ebiten.Image) error {
 			max = h.game.snake.points
 		}
 		h.highestScore = max
+		h.eatedCherrys = eatedCherrys
 	}
 
 	return nil
